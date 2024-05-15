@@ -10,6 +10,12 @@ import json
 
 app = Flask(__name__)
 
+
+# use safe-thread data structures
+import queue
+
+DataJSON = queue.Queue()
+
 #connection string for sending C2D messages
 connection_str = "HostName=rd-iothub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=TcpaortpcdjcMkZDre1kVhBMdkAZVUXYPAIoTPaN/kQ="
 device_id = "TND_WH_10521C663374"
@@ -126,13 +132,14 @@ client = EventHubConsumerClient.from_connection_string(connection_str_event_hub,
 logger = logging.getLogger("azure.eventhub")
 logging.basicConfig(level=logging.INFO)
 
-DataJSON = ""
 
 @app.route('/get_data')
 def get_display_value():
-    if DataJSON == "":
+    try:
+        json_data = DataJSON.get(block=False)  # Retrieve data from the queue
+        return extract_data_from_event(json_data)
+    except queue.Empty:
         return jsonify({'response': "no data available"})
-    return extract_data_from_event(DataJSON.body_as_str())
 
 
 # Function to extract and format the required data
@@ -164,10 +171,9 @@ def extract_data_from_event(json_data):
 async def on_event(partition_context, event):
     logger.info("Received event from partition {}".format(partition_context.partition_id))
     global DataJSON
-    DataJSON = event.body_as_str()
-    print(DataJSON)
+    DataJSON.put(event.body_as_str())  # Extract the JSON data from the event object and put it in the queue
     await partition_context.update_checkpoint(event)
-
+    
 client = EventHubConsumerClient.from_connection_string(connection_str_event_hub, consumer_group, eventhub_name=eventhub_name)
 
 async def receive():
