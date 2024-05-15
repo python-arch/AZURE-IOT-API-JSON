@@ -164,7 +164,7 @@ def extract_data_from_event(json_data):
 async def on_event(partition_context, event):
     logger.info("Received event from partition {}".format(partition_context.partition_id))
     global DataJSON
-    DataJSON = event
+    DataJSON = event.body_as_str()
     print(DataJSON)
     await partition_context.update_checkpoint(event)
 
