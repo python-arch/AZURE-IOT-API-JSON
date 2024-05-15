@@ -33,7 +33,7 @@ def up():
         "RX": "DEVICE",
         "BACKEND_DATA": {
             "APP_STATE": "OPEN",
-            "AVERAGE_POWER_WATT": "POSTPONE",
+            "AVERAGE_POWER_WATT": "NEED",
             "ACTIVATION": "DONE",
             "WIFI_SETTING": "KEEP",
             "APP_DATA": {
@@ -47,11 +47,9 @@ def up():
                     "H_LOUVRE": "POS_1",
                     "V_LOUVRE": "POS_1"
                 },
-                "TIMER_DATA": {
+                "CONTROL_DATA": {
                     "TIMER_STATE": "OFF",
-                    "TIMER_HOURS": "0"
-                },
-                "TEMP_DATA": {
+                    "TIMER_HOURS": "0",
                     "TEMP_CELSIUS_USER": value
                 }
             }
@@ -87,7 +85,7 @@ def down():
         "RX": "DEVICE",
         "BACKEND_DATA": {
             "APP_STATE": "OPEN",
-            "AVERAGE_POWER_WATT": "POSTPONE",
+            "AVERAGE_POWER_WATT": "NEED",
             "ACTIVATION": "DONE",
             "WIFI_SETTING": "KEEP",
             "APP_DATA": {
@@ -101,11 +99,9 @@ def down():
                     "H_LOUVRE": "POS_1",
                     "V_LOUVRE": "POS_1"
                 },
-                "TIMER_DATA": {
+                "CONTROL_DATA": {
                     "TIMER_STATE": "OFF",
-                    "TIMER_HOURS": "0"
-                },
-                "TEMP_DATA": {
+                    "TIMER_HOURS": "0",
                     "TEMP_CELSIUS_USER": value
                 }
             }
