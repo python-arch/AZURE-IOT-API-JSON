@@ -14,7 +14,7 @@ app = Flask(__name__)
 # use safe-thread data structures
 import queue
 
-DataJSON = queue.Queue()
+DataJSON = ""
 
 #connection string for sending C2D messages
 connection_str = "HostName=rd-iothub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=TcpaortpcdjcMkZDre1kVhBMdkAZVUXYPAIoTPaN/kQ="
@@ -124,6 +124,47 @@ def down():
     except Exception as ex:
         return jsonify({'error': f"Unexpected error: {ex}"})
 
+@app.route('/reset_wifi')
+def reset_wifi():
+    data = {
+        "TRANSMISSION_PATH": {
+            "TX": "BACKEND",
+            "RX": "DEVICE",
+            "BACKEND_DATA": {
+                "APP_STATE": "OPEN",
+                "AVERAGE_POWER_WATT": "NEED",
+                "ACTIVATION": "DONE",
+                "WIFI_SETTING": "NEED",
+                "APP_DATA": {
+                    "MODE_DATA": {
+                        "FEATURES": "SLEEP",
+                        "MODE": "OFF"
+                    },
+                    "COMPONENT_DATA": {
+                        "PLASMA": "OFF",
+                        "FAN": "OFF",
+                        "H_LOUVRE": "POS_1",
+                        "V_LOUVRE": "POS_1"
+                    },
+                    "CONTROL_DATA": {
+                        "TIMER_STATE": "OFF",
+                        "TIMER_HOURS": "0",
+                        "TEMP_CELSIUS_USER": "-1"
+                    }
+                }
+            }
+        }
+    }
+    sent_message = json.dumps(data)
+    try:
+        registry_manager = IoTHubRegistryManager.from_connection_string(connection_str)
+        registry_manager.send_c2d_message(device_id, sent_message)
+        return jsonify({'message': f"Message {sent_message} sent successfully"})
+    except msrest.exceptions.HttpOperationError as ex:
+        return jsonify({'error': f"HttpOperationError: {ex.response.text}"})
+    except Exception as ex:
+        return jsonify({'error': f"Unexpected error: {ex}"})
+      
 connection_str_event_hub = 'Endpoint=sb://iothub-ns-rd-iothub-57224525-ae5daa8d09.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=TcpaortpcdjcMkZDre1kVhBMdkAZVUXYPAIoTPaN/kQ=;EntityPath=rd-iothub'
 consumer_group = '$Default'
 eventhub_name = 'rd-iothub'
@@ -135,11 +176,11 @@ logging.basicConfig(level=logging.INFO)
 
 @app.route('/get_data')
 def get_display_value():
-    try:
-        json_data = DataJSON.get(block=False)  # Retrieve data from the queue
-        return extract_data_from_event(json_data)
-    except queue.Empty:
-        return jsonify({'response': "no data available"})
+    if DataJSON == "":
+        jsonify({'response': "no data available"}) 
+        
+    return extract_data_from_event(DataJSON)
+        
 
 
 # Function to extract and format the required data
@@ -155,6 +196,7 @@ def extract_data_from_event(json_data):
     fault_data = parsed_data['PRODUCT_DATA']['DEVICE_DATA']['FAULT_DATA']
     humidity_data = parsed_data['PRODUCT_DATA']['DEVICE_DATA']['HUMIDITY_DATA']
     power_data = parsed_data['PRODUCT_DATA']['DEVICE_DATA']['POWER_DATA']
+    mode_data = parsed_data['PRODUCT_DATA']['DEVICE_DATA']['MODE_DATA']
 
     # Create a new JSON object with the extracted data
     response_json = {
@@ -163,7 +205,8 @@ def extract_data_from_event(json_data):
         "temp_data": temp_data,
         "fault_data": fault_data,
         "humidity_data": humidity_data,
-        "power_data": power_data
+        "power_data": power_data,
+        "mode_data":mode_data
     }
 
     return response_json
@@ -171,7 +214,8 @@ def extract_data_from_event(json_data):
 async def on_event(partition_context, event):
     logger.info("Received event from partition {}".format(partition_context.partition_id))
     global DataJSON
-    DataJSON.put(event.body_as_str())  # Extract the JSON data from the event object and put it in the queue
+    DataJSON = event.body_as_str()  # Extract the JSON data from the event object and put it in the queue
+    print(DataJSON)
     await partition_context.update_checkpoint(event)
     
 client = EventHubConsumerClient.from_connection_string(connection_str_event_hub, consumer_group, eventhub_name=eventhub_name)
