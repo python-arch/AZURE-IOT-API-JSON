@@ -39,7 +39,7 @@ def up():
         "RX": "DEVICE",
         "BACKEND_DATA": {
             "APP_STATE": "OPEN",
-            "AVERAGE_POWER_WATT": "NEED",
+            "AVERAGE_POWER_WATT": "KEEP",
             "ACTIVATION": "DONE",
             "WIFI_SETTING": "KEEP",
             "APP_DATA": {
@@ -91,7 +91,7 @@ def down():
         "RX": "DEVICE",
         "BACKEND_DATA": {
             "APP_STATE": "OPEN",
-            "AVERAGE_POWER_WATT": "NEED",
+            "AVERAGE_POWER_WATT": "KEEP",
             "ACTIVATION": "DONE",
             "WIFI_SETTING": "KEEP",
             "APP_DATA": {
@@ -124,17 +124,23 @@ def down():
     except Exception as ex:
         return jsonify({'error': f"Unexpected error: {ex}"})
 
-@app.route('/reset_wifi')
+@app.route('/reset_wifi', methods=['POST'])
 def reset_wifi():
+    data = request.json
+    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
+
+    
+    if value is None:
+        return jsonify({'error': 'Value not provided'}), 400
     data = {
         "TRANSMISSION_PATH": {
             "TX": "BACKEND",
             "RX": "DEVICE",
             "BACKEND_DATA": {
                 "APP_STATE": "OPEN",
-                "AVERAGE_POWER_WATT": "NEED",
+                "AVERAGE_POWER_WATT": "KEEP",
                 "ACTIVATION": "DONE",
-                "WIFI_SETTING": "NEED",
+                "WIFI_SETTING": "RESET",
                 "APP_DATA": {
                     "MODE_DATA": {
                         "FEATURES": "SLEEP",
@@ -149,7 +155,148 @@ def reset_wifi():
                     "CONTROL_DATA": {
                         "TIMER_STATE": "OFF",
                         "TIMER_HOURS": "0",
-                        "TEMP_CELSIUS_USER": "-1"
+                        "TEMP_CELSIUS_USER": value
+                    }
+                }
+            }
+        }
+    }
+    sent_message = json.dumps(data)
+    try:
+        registry_manager = IoTHubRegistryManager.from_connection_string(connection_str)
+        registry_manager.send_c2d_message(device_id, sent_message)
+        return jsonify({'message': f"Message {sent_message} sent successfully"})
+    except msrest.exceptions.HttpOperationError as ex:
+        return jsonify({'error': f"HttpOperationError: {ex.response.text}"})
+    except Exception as ex:
+        return jsonify({'error': f"Unexpected error: {ex}"})
+
+@app.route('/app_closed' , methods=['POST'])
+def app_closed():
+    data = request.json
+    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
+
+    
+    if value is None:
+        return jsonify({'error': 'Value not provided'}), 400
+    data = {
+        "TRANSMISSION_PATH": {
+            "TX": "BACKEND",
+            "RX": "DEVICE",
+            "BACKEND_DATA": {
+                "APP_STATE": "CLOSED",
+                "AVERAGE_POWER_WATT": "KEEP",
+                "ACTIVATION": "DONE",
+                "WIFI_SETTING": "KEEP",
+                "APP_DATA": {
+                    "MODE_DATA": {
+                        "FEATURES": "SLEEP",
+                        "MODE": "OFF"
+                    },
+                    "COMPONENT_DATA": {
+                        "PLASMA": "OFF",
+                        "FAN": "OFF",
+                        "H_LOUVRE": "POS_1",
+                        "V_LOUVRE": "POS_1"
+                    },
+                    "CONTROL_DATA": {
+                        "TIMER_STATE": "OFF",
+                        "TIMER_HOURS": "0",
+                        "TEMP_CELSIUS_USER": value
+                    }
+                }
+            }
+        }
+    }
+    sent_message = json.dumps(data)
+    try:
+        registry_manager = IoTHubRegistryManager.from_connection_string(connection_str)
+        registry_manager.send_c2d_message(device_id, sent_message)
+        return jsonify({'message': f"Message {sent_message} sent successfully"})
+    except msrest.exceptions.HttpOperationError as ex:
+        return jsonify({'error': f"HttpOperationError: {ex.response.text}"})
+    except Exception as ex:
+        return jsonify({'error': f"Unexpected error: {ex}"})
+    
+@app.route('/app_open', methods=['POST'])
+def app_open():
+    data = request.json
+    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
+
+    
+    if value is None:
+        return jsonify({'error': 'Value not provided'}), 400
+    data = {
+        "TRANSMISSION_PATH": {
+            "TX": "BACKEND",
+            "RX": "DEVICE",
+            "BACKEND_DATA": {
+                "APP_STATE": "OPEN",
+                "AVERAGE_POWER_WATT": "KEEP",
+                "ACTIVATION": "DONE",
+                "WIFI_SETTING": "KEEP",
+                "APP_DATA": {
+                    "MODE_DATA": {
+                        "FEATURES": "SLEEP",
+                        "MODE": "OFF"
+                    },
+                    "COMPONENT_DATA": {
+                        "PLASMA": "OFF",
+                        "FAN": "OFF",
+                        "H_LOUVRE": "POS_1",
+                        "V_LOUVRE": "POS_1"
+                    },
+                    "CONTROL_DATA": {
+                        "TIMER_STATE": "OFF",
+                        "TIMER_HOURS": "0",
+                        "TEMP_CELSIUS_USER": value
+                    }
+                }
+            }
+        }
+    }
+    sent_message = json.dumps(data)
+    try:
+        registry_manager = IoTHubRegistryManager.from_connection_string(connection_str)
+        registry_manager.send_c2d_message(device_id, sent_message)
+        return jsonify({'message': f"Message {sent_message} sent successfully"})
+    except msrest.exceptions.HttpOperationError as ex:
+        return jsonify({'error': f"HttpOperationError: {ex.response.text}"})
+    except Exception as ex:
+        return jsonify({'error': f"Unexpected error: {ex}"})
+
+@app.route('/get_power', methods=['POST'])
+def get_power():
+    data = request.json
+    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
+
+    
+    if value is None:
+        return jsonify({'error': 'Value not provided'}), 400
+    data = {
+        "TRANSMISSION_PATH": {
+            "TX": "BACKEND",
+            "RX": "DEVICE",
+            "BACKEND_DATA": {
+                "APP_STATE": "OPEN",
+                "AVERAGE_POWER_WATT": "NEED",
+                "ACTIVATION": "DONE",
+                "WIFI_SETTING": "KEEP",
+                "APP_DATA": {
+                    "MODE_DATA": {
+                        "FEATURES": "SLEEP",
+                        "MODE": "OFF"
+                    },
+                    "COMPONENT_DATA": {
+                        "PLASMA": "OFF",
+                        "FAN": "OFF",
+                        "H_LOUVRE": "POS_1",
+                        "V_LOUVRE": "POS_1"
+                    },
+                    "CONTROL_DATA": {
+                        "TIMER_STATE": "OFF",
+                        "TIMER_HOURS": "0",
+                        "TEMP_CELSIUS_USER": value
                     }
                 }
             }
