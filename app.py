@@ -28,10 +28,16 @@ def index():
 def up():
     # Extract the value from the POST request body
     data = request.json
-    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
-
-    if value is None:
-        return jsonify({'error': 'Value not provided'}), 400
+    value = data.get('temp_user', None)  # Assuming the value is sent as a JSON object with a key 'value'
+    features = data.get('features',None)
+    mode = data.get('mode', None)
+    plasma = data.get('plasma', None)
+    fan = data.get('fan', None)
+    h_louvre = data.get('h_louvre', None)
+    v_louvre = data.get('v_louvre',None)
+    timer_state = data.get('timer_state' , None)
+    timer_hours = data.get('timer_hours', None)
+    
 
     data = {
     "TRANSMISSION_PATH": {
@@ -44,18 +50,18 @@ def up():
             "WIFI_SETTING": "KEEP",
             "APP_DATA": {
                 "MODE_DATA": {
-                    "FEATURES": "SLEEP",
-                    "MODE": "OFF"
+                    "FEATURES": features,
+                    "MODE": mode
                 },
                 "COMPONENT_DATA": {
-                    "PLASMA": "OFF",
-                    "FAN": "OFF",
-                    "H_LOUVRE": "POS_1",
-                    "V_LOUVRE": "POS_1"
+                    "PLASMA": plasma,
+                    "FAN": fan,
+                    "H_LOUVRE": h_louvre,
+                    "V_LOUVRE": v_louvre
                 },
                 "CONTROL_DATA": {
-                    "TIMER_STATE": "OFF",
-                    "TIMER_HOURS": "0",
+                    "TIMER_STATE": timer_state,
+                    "TIMER_HOURS": timer_hours,
                     "TEMP_CELSIUS_USER": value
                 }
             }
@@ -77,13 +83,17 @@ def up():
 
 @app.route('/down', methods=['POST'])
 def down():
-    # Extract the value from the POST request body
     data = request.json
-    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
-
+    value = data.get('temp_user', None)  # Assuming the value is sent as a JSON object with a key 'value'
+    features = data.get('features',None)
+    mode = data.get('mode', None)
+    plasma = data.get('plasma', None)
+    fan = data.get('fan', None)
+    h_louvre = data.get('h_louvre', None)
+    v_louvre = data.get('v_louvre',None)
+    timer_state = data.get('timer_state' , None)
+    timer_hours = data.get('timer_hours', None)
     
-    if value is None:
-        return jsonify({'error': 'Value not provided'}), 400
     
     data = {
     "TRANSMISSION_PATH": {
@@ -96,19 +106,19 @@ def down():
             "WIFI_SETTING": "KEEP",
             "APP_DATA": {
                 "MODE_DATA": {
-                    "FEATURES": "SLEEP",
-                    "MODE": "OFF"
+                    "FEATURES": features,
+                    "MODE": mode,
                 },
                 "COMPONENT_DATA": {
-                    "PLASMA": "OFF",
-                    "FAN": "OFF",
-                    "H_LOUVRE": "POS_1",
-                    "V_LOUVRE": "POS_1"
+                    "PLASMA": plasma,
+                    "FAN": fan,
+                    "H_LOUVRE": h_louvre,
+                    "V_LOUVRE": v_louvre,
                 },
                 "CONTROL_DATA": {
-                    "TIMER_STATE": "OFF",
-                    "TIMER_HOURS": "0",
-                    "TEMP_CELSIUS_USER": value
+                    "TIMER_STATE": timer_state,
+                    "TIMER_HOURS":timer_hours,
+                    "TEMP_CELSIUS_USER": value,
                 }
             }
         }
@@ -127,11 +137,16 @@ def down():
 @app.route('/reset_wifi', methods=['POST'])
 def reset_wifi():
     data = request.json
-    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
-
-    
-    if value is None:
-        return jsonify({'error': 'Value not provided'}), 400
+    value = data.get('temp_user', None)  # Assuming the value is sent as a JSON object with a key 'value'
+    features = data.get('features',None)
+    mode = data.get('mode', None)
+    plasma = data.get('plasma', None)
+    fan = data.get('fan', None)
+    h_louvre = data.get('h_louvre', None)
+    v_louvre = data.get('v_louvre',None)
+    timer_state = data.get('timer_state' , None)
+    timer_hours = data.get('timer_hours', None)
+   
     data = {
         "TRANSMISSION_PATH": {
             "TX": "BACKEND",
@@ -143,18 +158,18 @@ def reset_wifi():
                 "WIFI_SETTING": "RESET",
                 "APP_DATA": {
                     "MODE_DATA": {
-                        "FEATURES": "SLEEP",
-                        "MODE": "OFF"
+                        "FEATURES": features,
+                        "MODE": mode
                     },
                     "COMPONENT_DATA": {
-                        "PLASMA": "OFF",
-                        "FAN": "OFF",
-                        "H_LOUVRE": "POS_1",
-                        "V_LOUVRE": "POS_1"
+                        "PLASMA": plasma,
+                        "FAN": fan,
+                        "H_LOUVRE": h_louvre,
+                        "V_LOUVRE": v_louvre
                     },
                     "CONTROL_DATA": {
-                        "TIMER_STATE": "OFF",
-                        "TIMER_HOURS": "0",
+                        "TIMER_STATE": timer_state,
+                        "TIMER_HOURS": timer_hours,
                         "TEMP_CELSIUS_USER": value
                     }
                 }
@@ -174,8 +189,15 @@ def reset_wifi():
 @app.route('/app_closed' , methods=['POST'])
 def app_closed():
     data = request.json
-    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
-
+    value = data.get('temp_user', None)  # Assuming the value is sent as a JSON object with a key 'value'
+    features = data.get('features',None)
+    mode = data.get('mode', None)
+    plasma = data.get('plasma', None)
+    fan = data.get('fan', None)
+    h_louvre = data.get('h_louvre', None)
+    v_louvre = data.get('v_louvre',None)
+    timer_state = data.get('timer_state' , None)
+    timer_hours = data.get('timer_hours', None)
     
     if value is None:
         return jsonify({'error': 'Value not provided'}), 400
@@ -190,18 +212,18 @@ def app_closed():
                 "WIFI_SETTING": "KEEP",
                 "APP_DATA": {
                     "MODE_DATA": {
-                        "FEATURES": "SLEEP",
-                        "MODE": "OFF"
+                        "FEATURES": features,
+                        "MODE": mode
                     },
                     "COMPONENT_DATA": {
-                        "PLASMA": "OFF",
-                        "FAN": "OFF",
-                        "H_LOUVRE": "POS_1",
-                        "V_LOUVRE": "POS_1"
+                        "PLASMA": plasma,
+                        "FAN": fan,
+                        "H_LOUVRE": h_louvre,
+                        "V_LOUVRE": v_louvre
                     },
                     "CONTROL_DATA": {
-                        "TIMER_STATE": "OFF",
-                        "TIMER_HOURS": "0",
+                        "TIMER_STATE": timer_state,
+                        "TIMER_HOURS": timer_hours,
                         "TEMP_CELSIUS_USER": value
                     }
                 }
@@ -221,8 +243,15 @@ def app_closed():
 @app.route('/app_open', methods=['POST'])
 def app_open():
     data = request.json
-    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
-
+    value = data.get('temp_user', None)  # Assuming the value is sent as a JSON object with a key 'value'
+    features = data.get('features',None)
+    mode = data.get('mode', None)
+    plasma = data.get('plasma', None)
+    fan = data.get('fan', None)
+    h_louvre = data.get('h_louvre', None)
+    v_louvre = data.get('v_louvre',None)
+    timer_state = data.get('timer_state' , None)
+    timer_hours = data.get('timer_hours', None)
     
     if value is None:
         return jsonify({'error': 'Value not provided'}), 400
@@ -237,18 +266,18 @@ def app_open():
                 "WIFI_SETTING": "KEEP",
                 "APP_DATA": {
                     "MODE_DATA": {
-                        "FEATURES": "SLEEP",
-                        "MODE": "OFF"
+                        "FEATURES":features,
+                        "MODE":mode
                     },
                     "COMPONENT_DATA": {
-                        "PLASMA": "OFF",
-                        "FAN": "OFF",
-                        "H_LOUVRE": "POS_1",
-                        "V_LOUVRE": "POS_1"
+                        "PLASMA": plasma,
+                        "FAN": fan,
+                        "H_LOUVRE": h_louvre,
+                        "V_LOUVRE": v_louvre
                     },
                     "CONTROL_DATA": {
-                        "TIMER_STATE": "OFF",
-                        "TIMER_HOURS": "0",
+                        "TIMER_STATE": timer_state,
+                        "TIMER_HOURS": timer_hours,
                         "TEMP_CELSIUS_USER": value
                     }
                 }
@@ -268,8 +297,15 @@ def app_open():
 @app.route('/get_power', methods=['POST'])
 def get_power():
     data = request.json
-    value = data.get('value', None)  # Assuming the value is sent as a JSON object with a key 'value'
-
+    value = data.get('temp_user', None)  # Assuming the value is sent as a JSON object with a key 'value'
+    features = data.get('features',None)
+    mode = data.get('mode', None)
+    plasma = data.get('plasma', None)
+    fan = data.get('fan', None)
+    h_louvre = data.get('h_louvre', None)
+    v_louvre = data.get('v_louvre',None)
+    timer_state = data.get('timer_state' , None)
+    timer_hours = data.get('timer_hours', None)
     
     if value is None:
         return jsonify({'error': 'Value not provided'}), 400
@@ -284,18 +320,18 @@ def get_power():
                 "WIFI_SETTING": "KEEP",
                 "APP_DATA": {
                     "MODE_DATA": {
-                        "FEATURES": "SLEEP",
-                        "MODE": "OFF"
+                        "FEATURES": features,
+                        "MODE": mode
                     },
                     "COMPONENT_DATA": {
-                        "PLASMA": "OFF",
-                        "FAN": "OFF",
-                        "H_LOUVRE": "POS_1",
-                        "V_LOUVRE": "POS_1"
+                        "PLASMA": plasma,
+                        "FAN": fan,
+                        "H_LOUVRE": h_louvre,
+                        "V_LOUVRE": v_louvre
                     },
                     "CONTROL_DATA": {
-                        "TIMER_STATE": "OFF",
-                        "TIMER_HOURS": "0",
+                        "TIMER_STATE": timer_state,
+                        "TIMER_HOURS": timer_hours,
                         "TEMP_CELSIUS_USER": value
                     }
                 }
